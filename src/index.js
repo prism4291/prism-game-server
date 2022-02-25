@@ -50,7 +50,6 @@ io.on('connection', (socket) => {
     console.log('clientLogin: ', message);
     var userData = JSON.parse(message);
     var dbPass=null;
-    var query = ;
     conn
       .query({
         text: "SELECT password FROM member WHERE username = $1",
