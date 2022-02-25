@@ -2,12 +2,23 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
-var { Pool } = require('pg');
-const pool = new Pool({
+const { Client } = require("pg");
+const client = new Client({
   connectionString: process.env.DATABASE_URL,
   ssl: true
 });
-
+const query = {
+      text: "CREATE TABLE member (username text,password text)",
+    };
+    client.connect();
+    client
+      .query(query)
+      .then((res) => {
+        console.log(res.rows[0]);
+        dbPass=res.rows[0];
+        client.end();
+      })
+      .catch((e) => console.error(e.stack));
 
 const app = express();
 const server = http.Server(app);
@@ -34,17 +45,36 @@ io.on('connection', (socket) => {
   socket.on('clientLogin', (message) => {
     console.log('clientLogin: ', message);
     var userData = JSON.parse(message);
-    try {
-      const pgclient = pool.connect();
-      await pgclient.query('CREATE TABLE member (username text,password text);');
-      const pgresult = await pgclient.query('SELECT * FROM member');
-      const pgresults = { 'results': (pgresult) ? pgresult.rows : null};
-      console.log(pgresults);
-      client.release();
-    } catch (err) {
-      console.error(err);
-      res.send("Error " + err);
+    var dbPass=null;
+    var query = {
+      text: "SELECT password FROM member WHERE username = $1",
+      values: [userData["username"]],
+    };
+    client.connect();
+    client
+      .query(query)
+      .then((res) => {
+        console.log(res.rows[0]);
+        dbPass=res.rows[0];
+        client.end();
+      })
+      .catch((e) => console.error(e.stack));
+    if(dbPass==null){
+      var query = {
+        text: "INSERT INTO member VALUES ($1,$2)",
+        values: [userData["username"],userData["password"]],
+      };
+      client.connect();
+      client
+        .query(query)
+        .then((res) => {
+          console.log(res.rows[0]);
+          dbPass=res.rows[0];
+          client.end();
+        })
+        .catch((e) => console.error(e.stack));
+    }else if(dbPass==userData["password"]){
+        io.to(socket.id).emit('serverVerifyLogin',socket.id);
     }
-    io.to(socket.id).emit('serverVerifyLogin',socket.id);
   });
 });
