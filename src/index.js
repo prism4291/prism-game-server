@@ -23,7 +23,7 @@ conn.connect((err) => {
 const query = {
   text: "DELETE FROM member",
 };
-await conn
+conn
   .query(query)
   .then((res) => {
     console.log(res.rows[0]);
@@ -55,7 +55,7 @@ io.on('connection', (socket) => {
       text: "SELECT password FROM member WHERE username = $1",
       values: [userData["username"]],
     };
-    await conn
+    conn
       .query(query)
       .then((res) => {
         dbPass=res.rows[0];
@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
         text: "INSERT INTO member VALUES ($1,$2)",
         values: [userData["username"],userData["password"]],
       };
-      await conn
+      conn
         .query(query)
         .then((res) => {
           io.to(socket.id).emit('serverVerifyLogin',socket.id);
