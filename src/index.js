@@ -1,7 +1,13 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const path = require('path')
+const path = require('path');
+var { Pool } = require('pg');
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
+});
+
 
 const app = express();
 const server = http.Server(app);
@@ -28,7 +34,17 @@ io.on('connection', (socket) => {
   socket.on('clientLogin', (message) => {
     console.log('clientLogin: ', message);
     var userData = JSON.parse(message);
-    
+    try {
+      const pgclient = pool.connect();
+      await pgclient.query('CREATE TABLE member (username text,password text);');
+      const pgresult = await pgclient.query('SELECT * FROM member');
+      const pgresults = { 'results': (pgresult) ? pgresult.rows : null};
+      console.log(pgresults);
+      client.release();
+    } catch (err) {
+      console.error(err);
+      res.send("Error " + err);
+    }
     io.to(socket.id).emit('serverVerifyLogin',socket.id);
   });
 });
