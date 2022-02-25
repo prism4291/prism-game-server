@@ -3,25 +3,32 @@ const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
 const { Client } = require("pg");
-const client = new Client({
+const conn = new Client({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     sslmode:'require',
     rejectUnauthorized:false
   }
 });
+conn.connect((err) => {
+  //エラー時の処理
+  if(err){
+      console.log('error connecting:' + err.stack);
+      return;
+  }
+  //接続成功時の処理
+  console.log('success');
+});
 const query = {
-      text: "CREATE TABLE member (username text,password text)",
-    };
-    client.connect();
-    client
-      .query(query)
-      .then((res) => {
-        console.log(res.rows[0]);
-        dbPass=res.rows[0];
-        client.end();
-      })
-      .catch((e) => console.error(e.stack));
+  text: "CREATE TABLE member (username text,password text)",
+};
+conn
+  .query(query)
+  .then((res) => {
+    console.log(res.rows[0]);
+    dbPass=res.rows[0];
+  })
+  .catch((e) => console.error(e.stack));
 
 const app = express();
 const server = http.Server(app);
@@ -53,13 +60,11 @@ io.on('connection', (socket) => {
       text: "SELECT password FROM member WHERE username = $1",
       values: [userData["username"]],
     };
-    client.connect();
-    client
+    conn
       .query(query)
       .then((res) => {
         console.log(res.rows[0]);
         dbPass=res.rows[0];
-        client.end();
       })
       .catch((e) => console.error(e.stack));
     if(dbPass==null){
@@ -67,13 +72,11 @@ io.on('connection', (socket) => {
         text: "INSERT INTO member VALUES ($1,$2)",
         values: [userData["username"],userData["password"]],
       };
-      client.connect();
-      client
+      conn
         .query(query)
         .then((res) => {
           console.log(res.rows[0]);
           dbPass=res.rows[0];
-          client.end();
         })
         .catch((e) => console.error(e.stack));
     }else if(dbPass==userData["password"]){
