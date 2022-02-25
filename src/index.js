@@ -19,7 +19,7 @@ conn.connect((err) => {
   //接続成功時の処理
   console.log('success');
 });
-
+/*
 conn
   .query({
     text: "DELETE FROM member",
@@ -29,7 +29,7 @@ conn
     dbPass=res.rows[0];
   })
   .catch((e) => console.error(e.stack));
-
+*/
 const app = express();
 const server = http.Server(app);
 const io = socketIo(server);
