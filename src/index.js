@@ -49,17 +49,16 @@ io.on('connection', (socket) => {
   socket.on('clientLogin', (message) => {
     console.log('clientLogin: ', message);
     var userData = JSON.parse(message);
-    var dbPass=null;
     conn
       .query({
         text: "SELECT password FROM member WHERE username = $1",
         values: [userData["username"]],
       })
       .then((res) => {
-        dbPass=res.rows[0]["password"];
-        console.log("dbPass 2 ->");
-        console.log(dbPass);
-        if(dbPass==null){
+        dbData=res.rows[0];
+        console.log("dbData 2 ->");
+        console.log(dbData);
+        if(dbData==null){
           conn
             .query({
               text: "INSERT INTO member VALUES ($1,$2)",
@@ -69,14 +68,11 @@ io.on('connection', (socket) => {
               io.to(socket.id).emit('serverVerifyLogin',socket.id);
             })
             .catch((e) => console.error(e.stack));
-        }else if(dbPass==userData["password"]){
+        }else if(dbData["password"]==userData["password"]){
           io.to(socket.id).emit('serverVerifyLogin',socket.id);
         }
       })
       .catch((e) => console.error(e.stack));
-    console.log("dbPass->");
-    console.log(dbPass);
     
-    console.log(dbPass+","+userData["password"]);
   });
 });
