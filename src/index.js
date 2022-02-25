@@ -77,6 +77,7 @@ io.on('connection', (socket) => {
         .then((res) => {
           console.log(res.rows[0]);
           dbPass=res.rows[0];
+          io.to(socket.id).emit('serverVerifyLogin',socket.id);
         })
         .catch((e) => console.error(e.stack));
     }else if(dbPass==userData["password"]){
