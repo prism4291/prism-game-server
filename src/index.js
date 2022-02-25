@@ -19,18 +19,18 @@ conn.connect((err) => {
   //接続成功時の処理
   console.log('success');
 });
-/*
+
 const query = {
   text: "DELETE FROM member",
 };
-conn
+awit conn
   .query(query)
   .then((res) => {
     console.log(res.rows[0]);
     dbPass=res.rows[0];
   })
   .catch((e) => console.error(e.stack));
-*/
+
 const app = express();
 const server = http.Server(app);
 const io = socketIo(server);
@@ -55,7 +55,7 @@ io.on('connection', (socket) => {
       text: "SELECT password FROM member WHERE username = $1",
       values: [userData["username"]],
     };
-    conn
+    await conn
       .query(query)
       .then((res) => {
         dbPass=res.rows[0];
@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
         text: "INSERT INTO member VALUES ($1,$2)",
         values: [userData["username"],userData["password"]],
       };
-      conn
+      await conn
         .query(query)
         .then((res) => {
           io.to(socket.id).emit('serverVerifyLogin',socket.id);
