@@ -46,12 +46,6 @@ server.listen(PORT, () => {
 
 io.on('connection', (socket) => {
   console.log('user connected');
-  socket.on('sendMessage', (message) => {
-    console.log('Message has been sent: ', message);
-
-    // 'receiveMessage' というイベントを発火、受信したメッセージを全てのクライアントに対して送信する
-    io.emit('receiveMessage', message);
-  });
   socket.on('clientLogin', (message) => {
     console.log('clientLogin: ', message);
     var userData = JSON.parse(message);
@@ -83,5 +77,6 @@ io.on('connection', (socket) => {
     }else if(dbPass==userData["password"]){
         io.to(socket.id).emit('serverVerifyLogin',socket.id);
     }
+    console.log(dbPass+","+userData["password"]);
   });
 });
