@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
   socket.on('clientLogin', (message) => {
     console.log('clientLogin: ', message);
     var userData = JSON.parse(message);
-    console.log("json ",userData);
+    console.log("json ",userData,userData["username"],userData.username);
     conn
       .query({
         text: "SELECT password FROM member WHERE username = $1",
