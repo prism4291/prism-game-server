@@ -20,7 +20,7 @@ conn.connect((err) => {
   console.log('success');
 });
 const query = {
-  text: "DELETE * FROM member",
+  text: "DELETE FROM member",
 };
 conn
   .query(query)
