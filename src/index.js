@@ -27,6 +27,8 @@ io.on('connection', (socket) => {
   });
   socket.on('clientLogin', (message) => {
     console.log('clientLogin: ', message);
-    io.to(socket.id).emit('serverLoginId',socket.id);
+    var userData = JSON.parse(message);
+    
+    io.to(socket.id).emit('serverVerifyLogin',socket.id);
   });
 });
