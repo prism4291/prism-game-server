@@ -59,6 +59,8 @@ io.on('connection', (socket) => {
       .query(query)
       .then((res) => {
         dbPass=res.rows[0];
+        console.log("dbPass 2 ->");
+        console.log(dbPass);
       })
       .catch((e) => console.error(e.stack));
     console.log("dbPass->");
