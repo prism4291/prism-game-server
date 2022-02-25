@@ -20,7 +20,7 @@ conn.connect((err) => {
   console.log('success');
 });
 const query = {
-  text: "CREATE TABLE member (username text,password text)",
+  text: "CREATE TABLE IF NOT EXISTS member (username text,password text)",
 };
 conn
   .query(query)
