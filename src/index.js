@@ -23,7 +23,7 @@ conn.connect((err) => {
 const query = {
   text: "DELETE FROM member",
 };
-awit conn
+await conn
   .query(query)
   .then((res) => {
     console.log(res.rows[0]);
