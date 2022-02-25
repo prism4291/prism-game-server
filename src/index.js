@@ -25,4 +25,10 @@ io.on('connection', (socket) => {
     // 'receiveMessage' というイベントを発火、受信したメッセージを全てのクライアントに対して送信する
     io.emit('receiveMessage', message);
   });
+  socket.on('clientLogin', (message) => {
+    console.log('clientLogin: ', message);
+
+    // 'receiveMessage' というイベントを発火、受信したメッセージを全てのクライアントに対して送信する
+    io.emit('serverLoginId', {socketid=socket.id});
+  });
 });
