@@ -20,7 +20,7 @@ conn.connect((err) => {
   console.log('success');
 });
 const query = {
-  text: "CREATE TABLE IF NOT EXISTS member (username text,password text)",
+  text: "DELETE * FROM member",
 };
 conn
   .query(query)
@@ -57,10 +57,11 @@ io.on('connection', (socket) => {
     conn
       .query(query)
       .then((res) => {
-        console.log(res.rows[0]);
-        dbPass=res.rows[0]["password"];
+        dbPass=res.rows[0];
       })
       .catch((e) => console.error(e.stack));
+    console.log("dbPass->");
+    console.log(dbPass);
     if(dbPass==null){
       var query = {
         text: "INSERT INTO member VALUES ($1,$2)",
@@ -69,8 +70,6 @@ io.on('connection', (socket) => {
       conn
         .query(query)
         .then((res) => {
-          console.log(res.rows[0]);
-          dbPass=res.rows[0];
           io.to(socket.id).emit('serverVerifyLogin',socket.id);
         })
         .catch((e) => console.error(e.stack));
