@@ -52,12 +52,12 @@ io.on('connection', (socket) => {
     console.log("json ",userData,userData["username"],userData.username);
     conn
       .query({
-        text: "SELECT password FROM member WHERE username = $1",
+        text: "SELECT * FROM member WHERE username = $1",
         values: [userData["username"]],
       })
       .then((res) => {
         dbData=res.rows[0];
-        console.log("dbData 2 ->");
+        console.log("dbData 2 ->",res);
         console.log(dbData);
         if(dbData==null){
           conn
