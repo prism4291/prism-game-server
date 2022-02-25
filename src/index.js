@@ -29,6 +29,6 @@ io.on('connection', (socket) => {
     console.log('clientLogin: ', message);
 
     // 'receiveMessage' というイベントを発火、受信したメッセージを全てのクライアントに対して送信する
-    io.emit('serverLoginId', {socketid:socket.id});
+    io.to(socket.id).emit('serverLoginId',socket.id);
   });
 });
