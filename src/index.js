@@ -59,7 +59,7 @@ io.on('connection', (socket) => {
     socket.join(roomName);
     roomList.push(roomName);
     roomDict[roomName]={active:true,host:socketToName[socket.id],guest:[]};
-  }
+  });
   socket.on('clientGetRoom', (message) => {
     var resRooms=[];
     for(int i=0;i<roomList.length;i++){
@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
       }
     }
     io.to(socket.id).emit('serverGetRoomRes',{rooms:resRooms});
-  }
+  });
   socket.on('clientJoinRoom', (message) => {
     var userData = JSON.parse(message);
     var joiningRoom=userData["room"];
@@ -83,7 +83,7 @@ io.on('connection', (socket) => {
       io.to(socket.id).emit('serverJoinRoomRes',{status:"success"});
       io.to(joiningRoom).emit('serverStartGame',{status:"start"});
     }
-  }
+  });
   socket.on('clientLogin', (message) => {
     console.log('clientLogin: ', message);
     var userData = JSON.parse(message);
