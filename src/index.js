@@ -66,11 +66,13 @@ io.on('connection', (socket) => {
               values: [userData["username"],userData["password"]],
             })
             .then((res) => {
-              io.to(socket.id).emit('serverVerifyLogin',socket.id);
+              io.to(socket.id).emit('serverVerifyLogin',{status:"new",socketid:socket.id});
             })
             .catch((e) => console.error(e.stack));
         }else if(dbData["password"]==userData["password"]){
-          io.to(socket.id).emit('serverVerifyLogin',socket.id);
+          io.to(socket.id).emit('serverVerifyLogin',{status:"match",socketid:socket.id});
+        }else{
+          io.to(socket.id).emit('serverVerifyLogin',{status:"fail",socketid:""});
         }
       })
       .catch((e) => console.error(e.stack));
