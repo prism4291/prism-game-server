@@ -30,6 +30,13 @@ conn
   })
   .catch((e) => console.error(e.stack));
 */
+
+var socketToName={};
+
+var roomList=[];
+var roomDict={};
+var roomNum=1;
+
 const app = express();
 const server = http.Server(app);
 const io = socketIo(server);
@@ -46,10 +53,42 @@ server.listen(PORT, () => {
 
 io.on('connection', (socket) => {
   console.log('user connected');
+  socket.on('clientCreateRoom', (message) => {
+    roomNum+=Math.floor( Math.random() * 100 +1);
+    var roomName="room"+roomNum;
+    socket.join(roomName);
+    roomList.push(roomName);
+    roomDict[roomName]={active:true,host:socketToName[socket.id],guest:[]};
+  }
+  socket.on('clientGetRoom', (message) => {
+    var resRooms=[];
+    for(int i=0;i<roomList.length;i++){
+      if(roomDict[roomList[i]]["active"]==true){
+        resRooms.push(roomDict[roomList[i]]);
+      }
+    }
+    io.to(socket.id).emit('serverGetRoomRes',{rooms:resRooms});
+  }
+  socket.on('clientJoinRoom', (message) => {
+    var userData = JSON.parse(message);
+    var joiningRoom=userData["room"];
+    if(roomDict[joiningRoom]==null){
+      io.to(socket.id).emit('serverJoinRoomRes',{status:"notfound"});
+    }else if(roomDict[joiningRoom]["active"]==false){
+      io.to(socket.id).emit('serverJoinRoomRes',{status:"closed"});
+    }else if(roomDict[joiningRoom]["active"]==true){
+      socket.join(joiningRoom);
+      roomDict[joiningRoom]["active"]=false;
+      roomDict[joiningRoom]["guest"].push(socket.id);
+      io.to(socket.id).emit('serverJoinRoomRes',{status:"success"});
+      io.to(joiningRoom).emit('serverStartGame',{status:"start"});
+    }
+  }
   socket.on('clientLogin', (message) => {
     console.log('clientLogin: ', message);
     var userData = JSON.parse(message);
     console.log("json ",userData,userData["username"],userData.username);
+    socketToName[socket.id]=userData.username;
     conn
       .query({
         text: "SELECT * FROM member WHERE username = $1",
