@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
   });
   socket.on('clientGetRoom', (message) => {
     var resRooms=[];
-    for(int i=0;i<roomList.length;i++){
+    for(var i=0;i<roomList.length;i++){
       if(roomDict[roomList[i]]["active"]==true){
         resRooms.push(roomDict[roomList[i]]);
       }
