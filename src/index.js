@@ -59,7 +59,7 @@ io.on('connection', (socket) => {
     socket.join(roomName);
     roomList.push(roomName);
     roomDict[roomName]={active:true,name:roomName,host:socketToName[socket.id],guest:[]};
-    io.to(socket.id).emit('serverCreateRoomRes',{name:roomName});
+    io.to(socket.id).emit('serverCreateRoomRes',{name:roomName,room:roomDict[roomName]});
   });
   socket.on('clientGetRoom', (message) => {
     var resRooms=[];
@@ -82,7 +82,7 @@ io.on('connection', (socket) => {
       roomDict[joiningRoom]["active"]=false;
       roomDict[joiningRoom]["guest"].push(socketToName[socket.id]);
       io.to(socket.id).emit('serverJoinRoomRes',{status:"success",room:roomDict[joiningRoom]});
-      io.to(joiningRoom).emit('serverJoinMember',{name:socketToName[socket.id]});
+      io.to(joiningRoom).emit('serverJoinMember',{name:socketToName[socket.id],room:roomDict[joiningRoom]});
       io.to(joiningRoom).emit('serverStartGame',{status:"start"});
     }
   });
