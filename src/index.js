@@ -59,6 +59,7 @@ io.on('connection', (socket) => {
     socket.join(roomName);
     roomList.push(roomName);
     roomDict[roomName]={active:true,name:roomName,host:socketToName[socket.id],guest:[]};
+    io.to(socket.id).emit('serverCreateRoomRes',{name:roomName});
   });
   socket.on('clientGetRoom', (message) => {
     var resRooms=[];
