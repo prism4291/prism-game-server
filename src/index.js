@@ -61,6 +61,11 @@ io.on('connection', (socket) => {
     roomDict[roomName]={active:true,name:roomName,host:socketToName[socket.id],guest:[]};
     io.to(socket.id).emit('serverCreateRoomRes',{name:roomName,room:roomDict[roomName]});
   });
+  socket.on('clientStartGame', (message) => {
+    var userData = JSON.parse(message);
+    var joiningRoom=userData["name"];
+    io.to(joiningRoom).emit('serverStartGame',{status:"start"});
+  });
   socket.on('clientGetRoom', (message) => {
     var resRooms=[];
     for(var i=0;i<roomList.length;i++){
@@ -83,7 +88,7 @@ io.on('connection', (socket) => {
       roomDict[joiningRoom]["guest"].push(socketToName[socket.id]);
       io.to(socket.id).emit('serverJoinRoomRes',{status:"success",room:roomDict[joiningRoom]});
       io.to(joiningRoom).emit('serverJoinMember',{name:socketToName[socket.id],room:roomDict[joiningRoom]});
-      io.to(joiningRoom).emit('serverStartGame',{status:"start"});
+      
     }
   });
   socket.on('clientLogin', (message) => {
