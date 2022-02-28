@@ -81,7 +81,8 @@ io.on('connection', (socket) => {
       socket.join(joiningRoom);
       roomDict[joiningRoom]["active"]=false;
       roomDict[joiningRoom]["guest"].push(socketToName[socket.id]);
-      io.to(socket.id).emit('serverJoinRoomRes',{status:"success"});
+      io.to(socket.id).emit('serverJoinRoomRes',{status:"success",room:roomDict[joiningRoom]});
+      io.to(joiningRoom).emit('serverJoinMember',{name:socketToName[socket.id]});
       io.to(joiningRoom).emit('serverStartGame',{status:"start"});
     }
   });
