@@ -1,3 +1,4 @@
+const clientVersion=1;
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -95,7 +96,10 @@ io.on('connection', (socket) => {
     console.log('clientLogin: ', message);
     var userData = JSON.parse(message);
     console.log("json ",userData,userData["username"],userData.username);
-    socketToName[socket.id]=userData.username;
+    if(userData["version"]!=clientVersion){
+      io.to(socket.id).emit('serverVerifyLogin',{status:"fail",socketid:""});
+    }else{  
+    socketToName[socket.id]=userData["username"];
     conn
       .query({
         text: "SELECT * FROM member WHERE username = $1",
@@ -122,6 +126,6 @@ io.on('connection', (socket) => {
         }
       })
       .catch((e) => console.error(e.stack));
-    
+    }
   });
 });
