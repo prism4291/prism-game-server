@@ -33,6 +33,7 @@ conn
 */
 
 var socketToName={};
+var socketToRoom={};
 
 var roomList=[];
 var roomDict={};
@@ -54,9 +55,13 @@ server.listen(PORT, () => {
 
 io.on('connection', (socket) => {
   console.log('user connected');
+  socket.on('clientRoomMessage',(message) => {
+    io.to(socketToRoom[socket.id]).emit('serverRoomMessage',message);
+  });
   socket.on('clientCreateRoom', (message) => {
     roomNum+=Math.floor( Math.random() * 100 +1);
     var roomName="room"+roomNum;
+    socketToRoom[socket.id]=roomName;
     socket.join(roomName);
     roomList.push(roomName);
     roomDict[roomName]={active:true,name:roomName,host:socketToName[socket.id],guest:[]};
@@ -85,6 +90,7 @@ io.on('connection', (socket) => {
       io.to(socket.id).emit('serverJoinRoomRes',{status:"closed"});
     }else if(roomDict[joiningRoom]["active"]==true){
       socket.join(joiningRoom);
+      socketToRoom[socket.id]=joiningRoom;
       roomDict[joiningRoom]["active"]=false;
       roomDict[joiningRoom]["guest"].push(socketToName[socket.id]);
       io.to(socket.id).emit('serverJoinRoomRes',{status:"success",room:roomDict[joiningRoom]});
