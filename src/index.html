@@ -8,20 +8,11 @@
 <body>
     <ul id="messages"></ul>
     <form id="message_form" action="#">
-      <input id="input_msg" autocomplete="off" /><button>Send</button>
+      <input id="input_msg" autocomplete="off" /><button>a</button>
     </form>
   <script>
-      var socketio = io();
-      $(function(){
-          $('#message_form').submit(function(){
-            socketio.emit('clientLogin', $('#input_msg').val());
-            $('#input_msg').val('');
-            return false;
-          });
-          socketio.on('serverVerifyLogin',function(msg){
-            $('#messages').append($('<li>').text(msg));
-          });
-        });
-    </script>
+    var socketio = io();
+      
+  </script>
 </body>
 </html>
