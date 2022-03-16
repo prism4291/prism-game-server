@@ -32,6 +32,7 @@ conn
   .catch((e) => console.error(e.stack));
 */
 
+var socketList=[];
 var socketToName={};
 var socketToRoom={};
 
@@ -56,9 +57,12 @@ server.listen(PORT, () => {
 io.on('connection', (socket) => {
   console.log('user connected');
   socket.on('clientRoomMessage',(message) => {
+    if(socketList.includes(socket.id){
     io.to(socketToRoom[socket.id]).emit('serverRoomMessage',message);
+    }
   });
   socket.on('clientCreateRoom', (message) => {
+    if(socketList.includes(socket.id){
     roomNum+=Math.floor( Math.random() * 100 +1);
     var roomName="room"+roomNum;
     socketToRoom[socket.id]=roomName;
@@ -66,13 +70,17 @@ io.on('connection', (socket) => {
     roomList.push(roomName);
     roomDict[roomName]={active:true,name:roomName,host:socketToName[socket.id],guest:[]};
     io.to(socket.id).emit('serverCreateRoomRes',{name:roomName,room:roomDict[roomName]});
+    }
   });
   socket.on('clientStartGame', (message) => {
+    if(socketList.includes(socket.id){
     var userData = JSON.parse(message);
     var joiningRoom=userData["name"];
     io.to(joiningRoom).emit('serverStartGame',{status:"start"});
+    }
   });
   socket.on('clientGetRoom', (message) => {
+    if(socketList.includes(socket.id){
     var resRooms=[];
     for(var i=0;i<roomList.length;i++){
       if(roomDict[roomList[i]]["active"]==true){
@@ -80,8 +88,10 @@ io.on('connection', (socket) => {
       }
     }
     io.to(socket.id).emit('serverGetRoomRes',{rooms:resRooms});
+    }
   });
   socket.on('clientJoinRoom', (message) => {
+    if(socketList.includes(socket.id){
     var userData = JSON.parse(message);
     var joiningRoom=userData["room"];
     if(roomDict[joiningRoom]==null){
@@ -96,6 +106,7 @@ io.on('connection', (socket) => {
       io.to(socket.id).emit('serverJoinRoomRes',{status:"success",room:roomDict[joiningRoom]});
       io.to(joiningRoom).emit('serverJoinMember',{name:socketToName[socket.id],room:roomDict[joiningRoom]});
       
+    }
     }
   });
   socket.on('clientLogin', (message) => {
@@ -123,10 +134,12 @@ io.on('connection', (socket) => {
             })
             .then((res) => {
               io.to(socket.id).emit('serverVerifyLogin',{status:"new",socketid:socket.id});
+              socketList.push(socket.id);
             })
             .catch((e) => console.error(e.stack));
         }else if(dbData["password"]==userData["password"]){
           io.to(socket.id).emit('serverVerifyLogin',{status:"match",socketid:socket.id});
+          socketList.push(socket.id);
         }else{
           io.to(socket.id).emit('serverVerifyLogin',{status:"fail",socketid:""});
         }
