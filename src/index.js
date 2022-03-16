@@ -57,12 +57,12 @@ server.listen(PORT, () => {
 io.on('connection', (socket) => {
   console.log('user connected');
   socket.on('clientRoomMessage',(message) => {
-    if(socketList.includes(socket.id){
+    if(socketList.includes(socket.id)){
     io.to(socketToRoom[socket.id]).emit('serverRoomMessage',message);
     }
   });
   socket.on('clientCreateRoom', (message) => {
-    if(socketList.includes(socket.id){
+    if(socketList.includes(socket.id)){
     roomNum+=Math.floor( Math.random() * 100 +1);
     var roomName="room"+roomNum;
     socketToRoom[socket.id]=roomName;
@@ -73,14 +73,14 @@ io.on('connection', (socket) => {
     }
   });
   socket.on('clientStartGame', (message) => {
-    if(socketList.includes(socket.id){
+    if(socketList.includes(socket.id)){
     var userData = JSON.parse(message);
     var joiningRoom=userData["name"];
     io.to(joiningRoom).emit('serverStartGame',{status:"start"});
     }
   });
   socket.on('clientGetRoom', (message) => {
-    if(socketList.includes(socket.id){
+    if(socketList.includes(socket.id)){
     var resRooms=[];
     for(var i=0;i<roomList.length;i++){
       if(roomDict[roomList[i]]["active"]==true){
@@ -91,7 +91,7 @@ io.on('connection', (socket) => {
     }
   });
   socket.on('clientJoinRoom', (message) => {
-    if(socketList.includes(socket.id){
+    if(socketList.includes(socket.id)){
     var userData = JSON.parse(message);
     var joiningRoom=userData["room"];
     if(roomDict[joiningRoom]==null){
