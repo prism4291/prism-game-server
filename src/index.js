@@ -55,12 +55,21 @@ server.listen(PORT, () => {
 });
 
 io.on('connection', (socket) => {
+  
   console.log('user connected');
+  socket.on('disconnect',(message) => {
+    if(socketList.includes(socket.id)){
+      console.log("disconnect ",socket.id,socketToName[socket.id]);
+    io.to(socketToRoom[socket.id]).emit('serverDisconnect',message);
+    }else{
+      console.log("idk socket ",socket.id,socketToName[socket.id]);
+    }
+  });
   socket.on('clientRoomMessage',(message) => {
     if(socketList.includes(socket.id)){
     io.to(socketToRoom[socket.id]).emit('serverRoomMessage',message);
     }else{
-      console.log("idk socket ",socket.id);
+      console.log("idk socket ",socket.id,socketToName[socket.id]);
     }
   });
   socket.on('clientCreateRoom', (message) => {
@@ -73,7 +82,7 @@ io.on('connection', (socket) => {
     roomDict[roomName]={active:true,name:roomName,host:socketToName[socket.id],guest:[]};
     io.to(socket.id).emit('serverCreateRoomRes',{name:roomName,room:roomDict[roomName]});
     }else{
-      console.log("idk socket ",socket.id);
+      console.log("idk socket ",socket.id,socketToName[socket.id]);
     }
   });
   socket.on('clientStartGame', (message) => {
@@ -81,8 +90,9 @@ io.on('connection', (socket) => {
     var userData = JSON.parse(message);
     var joiningRoom=userData["name"];
     io.to(joiningRoom).emit('serverStartGame',{status:"start"});
+      console.log("startGame",socket.id,socketToName[socket.id]);
     }else{
-      console.log("idk socket ",socket.id);
+      console.log("idk socket ",socket.id,socketToName[socket.id]);
     }
   });
   socket.on('clientGetRoom', (message) => {
@@ -95,7 +105,7 @@ io.on('connection', (socket) => {
     }
     io.to(socket.id).emit('serverGetRoomRes',{rooms:resRooms});
     }else{
-      console.log("idk socket ",socket.id);
+      console.log("idk socket ",socket.id,socketToName[socket.id]);
     }
   });
   socket.on('clientJoinRoom', (message) => {
@@ -118,7 +128,7 @@ io.on('connection', (socket) => {
     }
   });
   socket.on('clientLogin', (message) => {
-    console.log('clientLogin: ', message);
+    console.log('clientLogin: ', message,socket.id);
     var userData = JSON.parse(message);
     //console.log("json ",userData,userData["username"],userData.username);
     if(userData["version"]!=clientVersion){
