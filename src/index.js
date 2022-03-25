@@ -59,6 +59,8 @@ io.on('connection', (socket) => {
   socket.on('clientRoomMessage',(message) => {
     if(socketList.includes(socket.id)){
     io.to(socketToRoom[socket.id]).emit('serverRoomMessage',message);
+    }else{
+      console.log("idk socket ",socket.id);
     }
   });
   socket.on('clientCreateRoom', (message) => {
@@ -70,6 +72,8 @@ io.on('connection', (socket) => {
     roomList.push(roomName);
     roomDict[roomName]={active:true,name:roomName,host:socketToName[socket.id],guest:[]};
     io.to(socket.id).emit('serverCreateRoomRes',{name:roomName,room:roomDict[roomName]});
+    }else{
+      console.log("idk socket ",socket.id);
     }
   });
   socket.on('clientStartGame', (message) => {
@@ -77,6 +81,8 @@ io.on('connection', (socket) => {
     var userData = JSON.parse(message);
     var joiningRoom=userData["name"];
     io.to(joiningRoom).emit('serverStartGame',{status:"start"});
+    }else{
+      console.log("idk socket ",socket.id);
     }
   });
   socket.on('clientGetRoom', (message) => {
@@ -88,6 +94,8 @@ io.on('connection', (socket) => {
       }
     }
     io.to(socket.id).emit('serverGetRoomRes',{rooms:resRooms});
+    }else{
+      console.log("idk socket ",socket.id);
     }
   });
   socket.on('clientJoinRoom', (message) => {
@@ -112,7 +120,7 @@ io.on('connection', (socket) => {
   socket.on('clientLogin', (message) => {
     console.log('clientLogin: ', message);
     var userData = JSON.parse(message);
-    console.log("json ",userData,userData["username"],userData.username);
+    //console.log("json ",userData,userData["username"],userData.username);
     if(userData["version"]!=clientVersion){
       io.to(socket.id).emit('serverVerifyLogin',{status:"fail",socketid:""});
     }else{  
@@ -124,8 +132,8 @@ io.on('connection', (socket) => {
       })
       .then((res) => {
         dbData=res.rows[0];
-        console.log("dbData 2 ->",res);
-        console.log(dbData);
+        //console.log("dbData 2 ->",res);
+        //console.log(dbData);
         if(dbData==null){
           conn
             .query({
