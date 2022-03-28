@@ -39,6 +39,7 @@ var socketToRoom={};
 var roomList=[];
 var roomDict={};
 var roomNum=1;
+var fuse=0;
 
 const app = express();
 const server = http.Server(app);
@@ -74,7 +75,10 @@ io.on('connection', (socket) => {
     if(socketList.includes(socket.id)){
       
       var roomMsgData = message;
+      fuse=fuse+1;
+      if(fuse%1000==0){
       console.log(Date.now()-roomMsgData["time"]);
+      }
       if(roomMsgData["type"]=="loop"&&roomMsgData["time"]+3000<Date.now()){
         console.log("too late from ",socketToName[socket.id]);
       }else{
