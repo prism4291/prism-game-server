@@ -75,7 +75,7 @@ io.on('connection', (socket) => {
       var roomMsgData = JSON.parse(message);
       
       if(roomMsgData["type"]=="loop"&&roomMsgData["time"]>Date.now()+3000){
-        console.log("too late from ",socketToName[socket.id:);
+        console.log("too late from ",socketToName[socket.id]);
       }else{
          
         io.to(socketToRoom[socket.id]).emit('serverRoomMessage',message);
