@@ -72,10 +72,10 @@ io.on('connection', (socket) => {
   });
   socket.on('clientRoomMessage',(message) => {
     if(socketList.includes(socket.id)){
-      console.log(typeof(message));
-      var roomMsgData = message;
       
-      if(roomMsgData["type"]=="loop"&&roomMsgData["time"]>Date.now()+3000){
+      var roomMsgData = message;
+      console.log(Date.now()-roomMsgData["time"]);
+      if(roomMsgData["type"]=="loop"&&roomMsgData["time"]+3000<Date.now()){
         console.log("too late from ",socketToName[socket.id]);
       }else{
          
