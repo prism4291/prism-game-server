@@ -77,6 +77,13 @@ io.on('connection', (socket) => {
       console.log("idk socket ",socket.id,socketToName[socket.id]);
     }
   });
+  socket.on('clientReStartGame',(message) => {
+    if(socketList.includes(socket.id)){
+    io.to(socketToRoom[socket.id]).emit('serverReStartGame',message);
+    }else{
+      console.log("idk socket ",socket.id,socketToName[socket.id]);
+    }
+  });
   socket.on('clientCreateRoom', (message) => {
     if(socketList.includes(socket.id)){
     roomNum+=Math.floor( Math.random() * 100 +1);
