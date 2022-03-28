@@ -72,6 +72,7 @@ io.on('connection', (socket) => {
   });
   socket.on('clientRoomMessage',(message) => {
     if(socketList.includes(socket.id)){
+      console.log(message);
       var roomMsgData = JSON.parse(message);
       
       if(roomMsgData["type"]=="loop"&&roomMsgData["time"]>Date.now()+3000){
