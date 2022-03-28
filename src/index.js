@@ -60,7 +60,12 @@ io.on('connection', (socket) => {
   socket.on('disconnect',(message) => {
     if(socketList.includes(socket.id)){
       console.log("disconnect ",socket.id,socketToName[socket.id]);
-    io.to(socketToRoom[socket.id]).emit('serverDisconnect',message);
+      for(var i=0;i<roomList.length;i++){
+        if(roomDict[roomList[i]]["host"]==socketToName[socket.id]){
+          roomDict[roomList[i]]["active"]="false";
+        }
+      }
+      io.to(socketToRoom[socket.id]).emit('serverDisconnect',message);
     }else{
       console.log("idk socket ",socket.id,socketToName[socket.id]);
     }
