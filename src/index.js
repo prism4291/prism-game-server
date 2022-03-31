@@ -1,4 +1,4 @@
-const clientVersion=2;
+const clientVersion=3;
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
