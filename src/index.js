@@ -1,5 +1,4 @@
 const clientVersion=4;
-var date = new Date() ;
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -60,8 +59,8 @@ io.on('connection', (socket) => {
   
   console.log('user connected');
   socket.on('ping',(message) => {
-    var unixTime = date.getTime() ;
-    io.to(socket.id).emit('pong',{ping:message,pong:unixTime});
+    
+    io.to(socket.id).emit('pong',{ping:message,pong:Date.now()});
   });
   
   socket.on('disconnect',(message) => {
