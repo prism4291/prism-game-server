@@ -1,4 +1,5 @@
 const clientVersion=4;
+var date = new Date() ;
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -58,6 +59,11 @@ server.listen(PORT, () => {
 io.on('connection', (socket) => {
   
   console.log('user connected');
+  socket.on('ping',(message) => {
+    var unixTime = date.getTime() ;
+    io.to(socket.id).emit('pong',{ping:message,pong:unixTime});
+  };
+  
   socket.on('disconnect',(message) => {
     if(socketList.includes(socket.id)){
       console.log("disconnect ",socket.id,socketToName[socket.id]);
