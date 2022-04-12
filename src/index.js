@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
   socket.on('ping',(message) => {
     var unixTime = date.getTime() ;
     io.to(socket.id).emit('pong',{ping:message,pong:unixTime});
-  };
+  });
   
   socket.on('disconnect',(message) => {
     if(socketList.includes(socket.id)){
